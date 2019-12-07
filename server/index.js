@@ -21,37 +21,39 @@ const pgClient = new Pool({
 pgClient.on('error', () => console.log('Lost PG connection'));
 
 pgClient
-pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
+  .query('CREATE TABLE IF NOT EXISTS values (number INT)')
   .catch(err => console.log(err));
 
 // Redis Client Setup
 const redis = require('redis');
 const redisClient = redis.createClient({
   host: keys.redisHost,
-  post: keys.redisPort,
+  port: keys.redisPort,
   retry_strategy: () => 1000
 });
 const redisPublisher = redisClient.duplicate();
 
 // Express route handlers
+
 app.get('/', (req, res) => {
   res.send('Hi');
 });
 
 app.get('/values/all', async (req, res) => {
-  const value = await pgClient.query('SELECT * from values');
+  const values = await pgClient.query('SELECT * from values');
+
   res.send(values.rows);
 });
 
 app.get('/values/current', async (req, res) => {
-  redisClient.hgetall('values', (erri, values) => {
+  redisClient.hgetall('values', (err, values) => {
     res.send(values);
   });
 });
 
 app.post('/values', async (req, res) => {
   const index = req.body.index;
-  
+
   if (parseInt(index) > 40) {
     return res.status(422).send('Index too high');
   }
