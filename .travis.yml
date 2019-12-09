@@ -6,7 +6,7 @@ before_install:
   - docker build -t mcleanmusa/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true mcleanmusa/react-test npm run test -- --coverage
+  - docker run -e CI=true mcleanmusa/react-test npm test -- --coverage
 
 after_success:
   - docker build -t mcleanmusa/complex-client ./client
