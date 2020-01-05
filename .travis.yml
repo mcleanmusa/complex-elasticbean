@@ -22,3 +22,15 @@ after_success:
   - docker push mcleanmusa/complex-nginx
   - docker push mcleanmusa/complex-server
   - docker push mcleanmusa/complex-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "multi-docker"
+  env: "mutli-docker-env"
+  bucket_name: "elasticbeanstalk-us-east-1-995672583397"
+  bucker_path: "complex"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
